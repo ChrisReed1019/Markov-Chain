@@ -32,8 +32,8 @@ namespace MarkovChain
                     {
                         //Console.Write(textList[i]);
                         textList[i] = textList[i].Substring(0, textList[i].Length - 1);
+                        endingWords.Add(textList[i]);
                         textList.Insert(i + 1, ".");
-                        Console.WriteLine("Removing {0} ({1}) and inserting . at {2}",i,textList[i],i+1);
                         //textList.RemoveAt(i);
                     }
                 }
@@ -80,16 +80,12 @@ namespace MarkovChain
                         j = 0;
                         if (i < followUp.Count && connections[j].Contains("=>"))
                         {
-                            Console.WriteLine(ToLiteral(textList[i]) + " + " + ToLiteral(followUp[i]));
-                            Console.WriteLine("Connecting {0} and {1}", textList[i], followUp[i]);
                             connections.Add(string.Format("{0}=>{1}", textList[i], followUp[i]));
                         }
                         else
                         {
                             if (i < followUp.Count)
                             {
-                                Console.WriteLine(ToLiteral(textList[i]) + " + " + ToLiteral(followUp[i]));
-                                Console.WriteLine("Connecting {0} and {1}", textList[i], followUp[i]);
                                 connections.Add(string.Format("{0}=>{1}", textList[i], followUp[i]));
                             }
                         }
@@ -105,23 +101,25 @@ namespace MarkovChain
                             connections[j] = String.Concat(connections[j],",",word);
                         }
              */
-            for (int i = 0; i <= textList.Count - 1; i++)
+            //join words
+            for(int i = 1; i<= connections.Count - 1; i++)
             {
-                for (j = 0; j <= connections.Count - 1; j++)
+                string word = connections[i].Substring(0, connections[i].IndexOf("=>"));
+                bool done = false;
+                while(!done)
                 {
 
                 }
-            }
-            Console.WriteLine("----");
-            Console.ReadKey();
-            for (int i = 0; i <= connections.Count - 1; i++)
-            {
-                Console.WriteLine("{0}: {1}", i, connections[i]);
+                Console.ReadKey();
             }
             Console.WriteLine("Done!");
             Console.ReadKey();
-            Console.Write("Enter word length: ");
+            Console.Write("Enter amount length: ");
+            int len = int.Parse(Console.ReadLine());
+            for(int i = 0; i<=len; i++)
+            {
 
+            }
             Console.ReadKey();
 
         }
