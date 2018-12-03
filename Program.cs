@@ -4,11 +4,10 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace MarkovChain
 {
-    class Program
+    internal class Program
     {
         private static void Main(string[] args)
         {
@@ -42,7 +41,7 @@ namespace MarkovChain
             for (int i = 0; i <= textList.Count - 1; i++)
             {
                 textList[i] = textList[i].ToLower();
-                string replacement = textList[i].Replace("\n", String.Empty).Replace("\t", String.Empty).Replace("\r", String.Empty); 
+                string replacement = textList[i].Replace("\n", string.Empty).Replace("\t", string.Empty).Replace("\r", string.Empty);
                 textList[i] = replacement;
                 if (i != textList.Count)
                 {
@@ -78,19 +77,19 @@ namespace MarkovChain
                 {
                     if (j == -1)
                         j = 0;
-                        if (i < followUp.Count && connections[j].Contains("=>"))
+                    if (i < followUp.Count && connections[j].Contains("=>"))
+                    {
+                        connections.Add(string.Format("{0}=>{1}", textList[i], followUp[i]));
+                    }
+                    else
+                    {
+                        if (i < followUp.Count)
                         {
                             connections.Add(string.Format("{0}=>{1}", textList[i], followUp[i]));
                         }
-                        else
-                        {
-                            if (i < followUp.Count)
-                            {
-                                connections.Add(string.Format("{0}=>{1}", textList[i], followUp[i]));
-                            }
-                        }
-                        j++;
-                        break;
+                    }
+                    j++;
+                    break;
                 } while (j <= connections.Count - 1 && connections.Count - 1 < 0);
             }
             /*
@@ -102,32 +101,69 @@ namespace MarkovChain
                         }
              */
             //join words
-            for(int i = 1; i<= connections.Count - 1; i++)
+            for (int i = 1; i <= connections.Count - 1; i++)
             {
                 string word = connections[i].Substring(0, connections[i].IndexOf("=>"));
                 bool done = false;
-                while(!done)
+                while (!done && i != connections.Count - 1)
                 {
-
+                    for (int k = i + 1; k <= connections.Count - 1; k++)
+                    {
+                        string w = connections[k].Substring(0, connections[k].IndexOf("=>"));
+                        string w2 = connections[k].Substring(connections[k].IndexOf("=>") + 2); ;
+                        Console.WriteLine("Reading: {0} for {1}", connections[i], w);
+                        if (w == word)
+                        {
+                            connections[i] = connections[i] + "|" + w2;
+                            connections.RemoveAt(k);
+                            done = true;
+                        }
+                    }
+                    done = true;
                 }
-                Console.ReadKey();
+                Console.WriteLine(i + "/" + (connections.Count - 1));
             }
             Console.WriteLine("Done!");
             Console.ReadKey();
             Console.Write("Enter amount length: ");
             int len = int.Parse(Console.ReadLine());
-            for(int i = 0; i<=len; i++)
+            string output = "";
+            Random rand = new Random();
+            for (int i = 0; i <= len; i++)
             {
-
+                string[] spl = output.Split(' ');
+                if (i == 0)
+                {
+                    output = output + startingWords[rand.Next(startingWords.Count)];
+                }
+                else if(spl[spl.Length - 1].EndsWith("."))
+                {
+                    output = output + " " + startingWords[rand.Next(startingWords.Count)];
+                }
+                else
+                {
+                    string prevWord = spl[spl.Length - 2];
+                    for (int f = 0; f <= connections.Count - 1; f++)
+                    {
+                        string word = connections[f].Substring(0, connections[i].IndexOf("=>"));
+                        string w2 = connections[f].Substring(connections[f].IndexOf("=>") + 2);
+                        List<string> splw2 = w2.Split('|').ToList();
+                        if (prevWord == word)
+                        {
+                            output = output + " " + splw2[rand.Next(splw2.Count)];
+                        }
+                    }
+                }
             }
+            Console.WriteLine(output);
             Console.ReadKey();
 
         }
         private static string ToLiteral(string input)
         {
-            using (var writer = new StringWriter())
+            using (StringWriter writer = new StringWriter())
             {
-                using (var provider = CodeDomProvider.CreateProvider("CSharp"))
+                using (CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp"))
                 {
                     provider.GenerateCodeFromExpression(new CodePrimitiveExpression(input), writer, null);
                     return writer.ToString();
