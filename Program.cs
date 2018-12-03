@@ -111,7 +111,6 @@ namespace MarkovChain
                     {
                         string w = connections[k].Substring(0, connections[k].IndexOf("=>"));
                         string w2 = connections[k].Substring(connections[k].IndexOf("=>") + 2); ;
-                        Console.WriteLine("Reading: {0} for {1}", connections[i], w);
                         if (w == word)
                         {
                             connections[i] = connections[i] + "|" + w2;
@@ -140,17 +139,29 @@ namespace MarkovChain
                 {
                     output = output + " " + startingWords[rand.Next(startingWords.Count)];
                 }
+                else if(i == len)
+                {
+                    output = output + endingWords[rand.Next(endingWords.Count)] + ".";
+                }
                 else
                 {
-                    string prevWord = spl[spl.Length - 2];
-                    for (int f = 0; f <= connections.Count - 1; f++)
+                    string prevWord;
+                    if (spl.Length - 2 > 0)
+                        prevWord = spl[spl.Length - 2];
+                    else
+                        prevWord = spl[0];
+                    for (int f = 1; f <= connections.Count - 1; f++)
                     {
-                        string word = connections[f].Substring(0, connections[i].IndexOf("=>"));
+                        string word = connections[f].Substring(0, connections[f].IndexOf("=>"));
                         string w2 = connections[f].Substring(connections[f].IndexOf("=>") + 2);
                         List<string> splw2 = w2.Split('|').ToList();
-                        if (prevWord == word)
+                        if (prevWord.ToLower() == word)
                         {
-                            output = output + " " + splw2[rand.Next(splw2.Count)];
+                            string nextWord = splw2[rand.Next(splw2.Count)];
+                            if (nextWord != ".")
+                                output = output + " " + nextWord;
+                            else
+                                output = output + nextWord;
                         }
                     }
                 }
