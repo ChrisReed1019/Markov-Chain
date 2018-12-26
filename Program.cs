@@ -92,14 +92,6 @@ namespace MarkovChain
                     break;
                 } while (j <= connections.Count - 1 && connections.Count - 1 < 0);
             }
-            /*
-            string word = connections[j].Substring(0, connections[i].IndexOf("=>"));
-                        if (textList[i] == word)
-                        {
-                            Console.WriteLine(word + " " + textList[i]);
-                            connections[j] = String.Concat(connections[j],",",word);
-                        }
-             */
             //join words
             for (int i = 1; i <= connections.Count - 1; i++)
             {
@@ -170,17 +162,5 @@ namespace MarkovChain
             Console.ReadKey();
 
         }
-        private static string ToLiteral(string input)
-        {
-            using (StringWriter writer = new StringWriter())
-            {
-                using (CodeDomProvider provider = CodeDomProvider.CreateProvider("CSharp"))
-                {
-                    provider.GenerateCodeFromExpression(new CodePrimitiveExpression(input), writer, null);
-                    return writer.ToString();
-                }
-            }
-        }
-
     }
 }
